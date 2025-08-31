@@ -1,2 +1,2 @@
-rootProject.name = "blog"
+rootProject.name = "springboot-security-jwt-example"
 
