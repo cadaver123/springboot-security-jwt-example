@@ -52,7 +52,7 @@ public class AuthController {
   @PostMapping("signup")
   @ResponseStatus(HttpStatus.CREATED)
   void addUser(@RequestBody @Validated UserCreateDto dto) {
-    repository.save(UserEntity.builder()
+    repository.saveAndFlush(UserEntity.builder()
         .username(dto.getUsername())
         .password(passwordEncoder.encode(dto.getPassword()))
         .firstname(dto.getFirstname())

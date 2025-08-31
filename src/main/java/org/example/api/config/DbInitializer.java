@@ -56,8 +56,9 @@ public class DbInitializer {
         postsList.add(PostEntity.builder().text(loremIpsum.substring(0, randomLength)).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build());
       }
 
-      var userEntity = UserEntity.builder().username(name.toLowerCase()).firstname(name).lastname("User").password(passwordEncoder.encode(name+"123")).authorities(List.of(AuthorityEntity.builder().authority("ROLE_ADMIN").build())).createdAt(LocalDateTime.now()).posts(postsList).build();
+      var userEntity = UserEntity.builder().username(name.toLowerCase()).firstname(name).lastname("User").password(passwordEncoder.encode(name+"123")).authorities(List.of(AuthorityEntity.builder().authority("ROLE_USER").build())).createdAt(LocalDateTime.now()).posts(postsList).build();
       repository.save(userEntity);
+      repository.flush();
     }
   }
 }

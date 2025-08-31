@@ -7,7 +7,7 @@ services:
       - DB_URL=jdbc:postgresql://db:5432/database
       - DB_USERNAME=db_user
       - DB_PASSWORD=6xKo80d4r&p
-      - ADMIN_KEY=&P6rjMqFe4P0j3XDH6#I2r
+      - ADMIN_API_KEY=&P6rjMqFe4P0j3XDH6#I2r
     depends_on:
       - db
 

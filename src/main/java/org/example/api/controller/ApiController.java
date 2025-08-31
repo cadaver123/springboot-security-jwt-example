@@ -9,6 +9,7 @@ import org.example.api.entity.PostEntity;
 import org.example.api.entity.UserEntity;
 import org.example.api.repository.PostRepository;
 import org.example.api.repository.UserRepository;
+import org.example.api.service.Mappers;
 import org.example.api.service.Verification;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -24,8 +25,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -78,26 +77,22 @@ public class ApiController {
     PostEntity postEntity = postEntityOptional.get();
     postEntity.setText(body.getText());
     postEntity.setUpdatedAt(LocalDateTime.now());
-    postRepository.save(postEntity);
+    postRepository.saveAndFlush(postEntity);
   }
 
   //Public
   @GetMapping("users")
   @PreAuthorize(ApiController.ALLOW_GUEST)
   Slice<UserDto> getUsers(Pageable pageable) {
-    return userRepository.findBy(pageable).map(ApiController::userMapper);
+    return userRepository.findBy(pageable).map(Mappers::userMapper);
   }
 
   @GetMapping("/users/{userId}/posts")
   @PreAuthorize(ApiController.ALLOW_GUEST)
-  List<PostDto> getPosts(@PathVariable UUID userId, Pageable pageable) {
-    List<PostEntity> entities = postRepository.findByUserId(userId);
-    var result = new ArrayList<PostDto>();
-    for (var entity : entities) {
-      result.add(postMapper(entity));
-    }
+  Slice<PostDto> getPosts(@PathVariable UUID userId, Pageable pageable) {
+    Slice<PostEntity> entities = postRepository.findByUserId(userId, pageable);
 
-    return result;
+    return entities.map(Mappers::postMapper);
   }
 
   @GetMapping("/users/{userId}/posts/{postId}")
@@ -106,25 +101,6 @@ public class ApiController {
     Optional<PostEntity> postEntityOptional = postRepository.findById(postId);
     Verification.isPostPresent(postEntityOptional);
 
-    return postMapper(postEntityOptional.get());
-  }
-
-
-  private static PostDto postMapper(PostEntity entity) {
-    return PostDto.builder()
-        .id(entity.getId().toString())
-        .text(entity.getText())
-        .createdAt(entity.getCreatedAt())
-        .updatedAt(entity.getUpdatedAt())
-        .build();
-  }
-
-  private static UserDto userMapper(UserEntity entity) {
-    return UserDto.builder()
-        .uuid(entity.getId().toString())
-        .firstname(entity.getFirstname())
-        .lastname(entity.getLastname())
-        .createdAt(entity.getCreatedAt())
-        .build();
+    return Mappers.postMapper(postEntityOptional.get());
   }
 }

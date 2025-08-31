@@ -19,6 +19,8 @@ docker-compose up -d
 Once started, the service exposes the OpenAPI definition at:
 👉 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
+Admin endpoints use additionally an `x-api-key` set by default to `&P6rjMqFe4P0j3XDH6#I2r`
+
 ---
 
 ## Obtaining a token

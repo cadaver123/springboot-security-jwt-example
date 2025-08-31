@@ -38,19 +38,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminController {
 
-  public static final String WRONG_ADMIN_KEY_MESSAGE = "Wrong admin key";
+  public static final String WRONG_ADMIN_API_KEY_MESSAGE = "Wrong admin api key";
 
   private final UserRepository userRepository;
   private final PostRepository postRepository;
 
-  @Value("${api.admin-key}")
+  @Value("${api.admin-api-key}")
   private String adminKey;
 
   @GetMapping("users")
-  List<UserDto> getUsers(@RequestHeader("x-admin-key") String adminKeyHeader, Pageable pageable) {
+  List<UserDto> getUsers(@RequestHeader("x-api-key") String adminKeyHeader, Pageable pageable) {
     if (!adminKey.equals(adminKeyHeader)) {
-      log.warn(WRONG_ADMIN_KEY_MESSAGE);
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, WRONG_ADMIN_KEY_MESSAGE);
+      log.warn(WRONG_ADMIN_API_KEY_MESSAGE);
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, WRONG_ADMIN_API_KEY_MESSAGE);
     }
 
     Slice<UserEntity> users = userRepository.findBy(pageable);
@@ -59,10 +59,10 @@ public class AdminController {
   }
 
   @GetMapping("users/posts:count")
-  Map<String, Integer> getUsersPostsCount(@RequestHeader("x-admin-key") String adminKeyHeader) {
+  Map<String, Integer> getUsersPostsCount(@RequestHeader("x-api-key") String adminKeyHeader) {
     if (!adminKey.equals(adminKeyHeader)) {
-      log.warn(WRONG_ADMIN_KEY_MESSAGE);
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, WRONG_ADMIN_KEY_MESSAGE);
+      log.warn(WRONG_ADMIN_API_KEY_MESSAGE);
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, WRONG_ADMIN_API_KEY_MESSAGE);
     }
 
     List<PostsCountProjection> postsCountPerUser = postRepository.getPostsCountPerUser();
@@ -72,10 +72,10 @@ public class AdminController {
 
   @PutMapping("users/{userId}")
   @ResponseStatus(HttpStatus.ACCEPTED)
-  void addRole(@RequestHeader("x-admin-key") String adminKeyHeader, @PathVariable UUID userId, @RequestBody AdminUpdateUserRolesDto dto) {
+  void addRole(@RequestHeader("x-api-key") String adminKeyHeader, @PathVariable UUID userId, @RequestBody AdminUpdateUserRolesDto dto) {
     if (!adminKey.equals(adminKeyHeader)) {
-      log.warn(WRONG_ADMIN_KEY_MESSAGE);
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, WRONG_ADMIN_KEY_MESSAGE);
+      log.warn(WRONG_ADMIN_API_KEY_MESSAGE);
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, WRONG_ADMIN_API_KEY_MESSAGE);
     }
 
     Optional<UserEntity> user = userRepository.findById(userId);
